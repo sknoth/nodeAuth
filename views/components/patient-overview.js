@@ -68,7 +68,7 @@ function getTitle(text) {
 function makeCorsRequest() {
   // This is a sample server that supports CORS.
   // var url = 'http://html5rocks-cors.s3-website-us-east-1.amazonaws.com/index.html';
-var url = 'http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx';
+var url = 'https://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx';
 
   var xhr = createCORSRequest('GET', url);
   if (!xhr) {

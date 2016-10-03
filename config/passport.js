@@ -69,6 +69,8 @@ module.exports = function(passport) {
                 newUser.local.email    = email;
                 newUser.local.password = newUser.generateHash(password);
 
+                newUser.role = 'researcher';
+
                 // save the user
                 newUser.save(function(err) {
                     if (err)
@@ -129,14 +131,18 @@ module.exports = function(passport) {
         clientID        : configAuth.facebookAuth.clientID,
         clientSecret    : configAuth.facebookAuth.clientSecret,
         callbackURL     : configAuth.facebookAuth.callbackURL,
-        profileFields: ["emails", "displayName", "name"]
+        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+        // profileFields: ["emails", "displayName", "name"]
     },
 
     // facebook will send back the token and profile
-    function(token, refreshToken, profile, done) {
+    function(req, token, refreshToken, profile, done) {
 
         // asynchronous
         process.nextTick(function() {
+
+          // check if the user is already logged in
+          if (!req.user) {
 
             // find the user in the database based on their facebook id
             User.findOne({ 'facebook.id' : profile.id }, function(err, user) {
@@ -170,6 +176,25 @@ module.exports = function(passport) {
                 }
 
             });
+
+          } else {
+                // user already exists and is logged in, we have to link accounts
+                var user            = req.user; // pull the user out of the session
+
+                // update the current users facebook credentials
+                user.facebook.id    = profile.id;
+                user.facebook.token = token;
+                user.facebook.name  = profile.name.givenName + ' ' + profile.name.familyName;
+                // user.facebook.email = profile.emails[0].value;
+
+                // save the user
+                user.save(function(err) {
+                    if (err)
+                        throw err;
+                    return done(null, user);
+                });
+            }
+
         });
 
     }));
@@ -182,11 +207,13 @@ module.exports = function(passport) {
         consumerSecret  : configAuth.twitterAuth.consumerSecret,
         callbackURL     : configAuth.twitterAuth.callbackURL
     },
-    function(token, tokenSecret, profile, done) {
+    function(req, token, tokenSecret, profile, done) {
 
         // make the code asynchronous
         // User.findOne won't fire until we have all our data back from Twitter
         process.nextTick(function() {
+
+          if(!req.user) {
 
             User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
 
@@ -217,6 +244,23 @@ module.exports = function(passport) {
                 }
             });
 
+          } else {
+                // user already exists and is logged in, we have to link accounts
+                var user            = req.user; // pull the user out of the session
+
+                user.twitter.id          = profile.id;
+                user.twitter.token       = token;
+                user.twitter.username    = profile.username;
+                user.twitter.displayName = profile.displayName;
+
+                // save the user
+                user.save(function(err) {
+                    if (err)
+                        throw err;
+                    return done(null, user);
+                });
+            }
+
     });
 
     }));
@@ -230,11 +274,13 @@ module.exports = function(passport) {
         clientSecret    : configAuth.googleAuth.clientSecret,
         callbackURL     : configAuth.googleAuth.callbackURL,
     },
-    function(token, refreshToken, profile, done) {
+    function(req, token, refreshToken, profile, done) {
 
         // make the code asynchronous
         // User.findOne won't fire until we have all our data back from Google
         process.nextTick(function() {
+
+          if(!req.user) {
 
             // try to find the user based on their google id
             User.findOne({ 'google.id' : profile.id }, function(err, user) {
@@ -263,6 +309,23 @@ module.exports = function(passport) {
                     });
                 }
             });
+
+          } else {
+                 // user already exists and is logged in, we have to link accounts
+                 var user            = req.user; // pull the user out of the session
+
+                 user.google.id    = profile.id;
+                 user.google.token = token;
+                 user.google.name  = profile.displayName;
+                 user.google.email = profile.emails[0].value; // pull the first email
+
+                 // save the user
+                 user.save(function(err) {
+                     if (err)
+                         throw err;
+                     return done(null, user);
+                 });
+             }
         });
 
     }));

@@ -25,8 +25,8 @@ var userSchema = mongoose.Schema({
         token        : String,
         email        : String,
         name         : String
-    }
-
+    },
+    role             : String // patient, physician or researcher
 });
 
 // methods ======================

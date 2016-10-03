@@ -1,0 +1,18 @@
+<header>
+  <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+
+          <ul class="nav navbar-nav">
+              <li><a href="/">Home</a></li>
+              <li><a href="/patient-overview">Patient Overview</a></li>
+              <li><a href="/video-list">Video List</a></li>
+              <li><a href="/profile">Profile</a></li>
+          </ul>
+          <% if (typeof user != 'undefined') { %>
+          <p class="navbar-text navbar-right">
+            <a href="/logout"><span class="fa fa-sign-out"></span>Logout</a>
+          </p>
+          <% } %>
+      </div>
+  </nav>
+</header>

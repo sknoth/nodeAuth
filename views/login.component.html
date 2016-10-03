@@ -1,0 +1,37 @@
+<div mdl class="page-content">
+  <div class="mdl-cell mdl-cell--4-col nb-auth-form">
+
+    <div class="mdl-typography--display-1-color-contrast">Login</div>
+
+    <form action="#">
+      <div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text">
+          <label class="mdl-textfield__label" for="sample5">Email</label>
+        </div>
+      </div>
+      <div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text">
+          <label class="mdl-textfield__label" for="sample5">Password</label>
+        </div>
+      </div>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+          Login
+        </button>
+        <p class="mdl-typography--text-left">Don't have an account yet? <a [routerLink]="['/signup']">Sign Up</a></p>
+    </form>
+
+    <p class="separator"><span>Or connect with</span></p>
+
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored btn-facebook mdl-js-ripple-effect">
+      Facebook
+    </button>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored btn-twitter mdl-js-ripple-effect">
+      Twitter
+    </button>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored btn-google mdl-js-ripple-effect">
+      Google
+    </button>
+  </div>
+</div>

@@ -1,5 +1,7 @@
 module.exports = function(app, passport) {
 
+  var feed = require('feed-read');
+  var request = require("request");
 
   app.all('/*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -19,19 +21,63 @@ module.exports = function(app, passport) {
         res.render('index.ejs'); // load the index.ejs file
     });
 
+    var parseString = require('xml2js').parseString;
     app.get('/patient-overview', isLoggedIn, function(req, res) {
+
+      var user = req.user;
+// http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx
+// http://www.techmeme.com/feed.xml
+
+
+
+request("http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx",
+  function(error, response, data) {
+
+  parseString(data, function (err, result) {
+      console.dir(result.rss.channel);
+
         res.render('pages/patient-overview.ejs', {
           message: req.flash('patient overview'),
-          user : req.user // get the user out of session and pass to template
+          user : req.user, // get the user out of session and pass to template
+          articles: result.rss.channel
         });
+  });
+  });
+      // feed("http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx", function(err, articles) {
+      //
+      //   res.render('pages/patient-overview.ejs', {
+      //     message: req.flash('patient overview'),
+      //     user : req.user, // get the user out of session and pass to template
+      //     articles: articles
+      //   });
+      //
+      // });
+
     });
 
 
-    app.get('/video-list', isLoggedIn, function(req, res) {
-        res.render('pages/video-list.ejs', {
-          message: req.flash('video list'),
-          user : req.user // get the user out of session and pass to template
+    app.get('/video-list',  function(req, res) {
+
+      var user = req.user;
+
+      request("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=UUrNRiQqbEGUtV17i4aiwGmg&key=AIzaSyCHO1c4kXxpJx34Pf0ETlXkA-MeDFVznTU",
+        function(error, response, data) {
+
+          var data = JSON.parse(data);
+          var videos = data.items;
+          var videoIds = [];
+
+          for (var key in videos) {
+            videoIds.push(videos[key].snippet.resourceId.videoId);
+          }
+
+          res.render('pages/video-list.ejs', {
+            message: req.flash('video list'),
+            user : user, // get the user out of session and pass to template
+            videoIds: videoIds
+          });
         });
+
     });
 
     // we will want this protected so you have to be logged in to visit
@@ -190,5 +236,6 @@ function isLoggedIn(req, res, next) {
         return next();
 
     // if they aren't redirect them to the home page
+
     res.redirect('/');
 }

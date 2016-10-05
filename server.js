@@ -19,6 +19,7 @@ var cors         = require('cors');
 
 var configDB = require('./config/database.js');
 
+
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
@@ -50,6 +51,9 @@ app.set('view engine', 'ejs'); // set up ejs for templating
 
 // routes ======================================================================
 require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
+
+
+var request = require('request');
 
 
 // launch ======================================================================

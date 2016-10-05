@@ -18,10 +18,31 @@
     <section>
     <h2>Welcome <span class="fa fa-user-md"></h2>
     </section>
-
     <% if (typeof user != 'undefined' && user.role === 'researcher') { %>
-      <section>
-      <h2>Latest News RSS (only for researchers)</h2>
+    <section>
+      <h2>
+        <%= articles[0].title %><br>
+        <small><%= articles[0].description %></small>
+      </h2>
+      <p>src: <a href="<%= articles[0].link %>"><%= articles[0].link %></a></p>
+      <hr>
+      <ul class="list-unstyled">
+      <% for(var i = 0; i < articles[0].item.length; i++) { %>
+        <li>
+          <h4><%= articles[0].item[i].title %></h4>
+          <small>Published on: <%= articles[0].item[i].pubDate %></small>
+          <p>
+            <%= articles[0].item[i].description %>
+          </p>
+          <p>
+            <a href="<%= articles[0].item[i].link %>">read more</a>
+            <a class="pull-right" href="<%= articles[0].item[i].comments %>">view comments</a>
+          </p>
+          <hr>
+        </li>
+      <% }; %>
+
+    </ul>
       </section>
     <% } %>
 <% } %>
@@ -30,12 +51,5 @@
 
   <% include ../partials/footer %>
 
-  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-    crossorigin="anonymous"></script>
-
-  <script type="text/javascript">
-    <% include ../components/patient-overview.js %>
-  </script>
 </body>
 </html>

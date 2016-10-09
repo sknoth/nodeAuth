@@ -59,12 +59,12 @@
                 <h3 class="text-info"><span class="fa fa-twitter"></span> Twitter</h3>
 
                   <!-- check if the user has this token (is the user authenticated with this social account) -->
-                  <% if (1==0|user.twitter_id) { %>
+                  <% if (user.twitter_id) { %>
                     <p>
                         <strong>id</strong>: <%= user.twitter_id %><br>
-                        <strong>token</strong>: <%= user.twitter.token %><br>
-                        <strong>username</strong>: <%= user.twitter.username %><br>
-                        <strong>displayName</strong>: <%= user.twitter.displayName %>
+                        <strong>token</strong>: <%= user.twitter_token %><br>
+                        <strong>username</strong>: <%= user.twitter_username %><br>
+                        <strong>displayName</strong>: <%= user.twitter_displayName %>
                     </p>
 
                     <a href="/unlink/twitter" class="btn btn-info">Unlink</a>
@@ -80,12 +80,12 @@
                 <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google</h3>
 
                 <!-- check if the user has this token (is the user authenticated with this social account) -->
-                <% if (1==0|user.google_id) { %>
+                <% if (user.google_id) { %>
                     <p>
-                        <strong>id</strong>: <%= user.google.id %><br>
-                        <strong>token</strong>: <%= user.google.token %><br>
-                        <strong>email</strong>: <%= user.google.email %><br>
-                        <strong>name</strong>: <%= user.google.name %>
+                        <strong>id</strong>: <%= user.google_id %><br>
+                        <strong>token</strong>: <%= user.google_token %><br>
+                        <strong>email</strong>: <%= user.google_email %><br>
+                        <strong>name</strong>: <%= user.google_name %>
                     </p>
 
                     <a href="/unlink/google" class="btn btn-danger">Unlink</a>

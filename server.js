@@ -5,7 +5,7 @@
 var express  = require('express');
 var app      = express();
 var port     = process.env.PORT || 9000;
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
 var ConnectRoles = require('connect-roles');
@@ -19,9 +19,8 @@ var cors         = require('cors');
 
 var configDB = require('./config/database.js');
 
-
 // configuration ===============================================================
-mongoose.connect(configDB.url); // connect to our database
+// mongoose.connect(configDB.url); // connect to our database
 
 require('./config/passport')(passport); // pass passport for configuration
 
@@ -59,3 +58,7 @@ var request = require('request');
 // launch ======================================================================
 app.listen(port);
 console.log('1The magic happens on port ' + port);
+
+process.on('uncaughtException', function (err) {
+    console.log(err);
+});

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<% include ../partials/head %>
+<body class="container">
+  <div class="page-header text-center">
+    <h1><span class="fa fa-medkit"></span> Patients Overview</h1>
+  </div>
+  <% include ../partials/header %>
+
+  <main>
+    <p>physicians and researchers are redirected to this page</p>
+<% if (typeof user != 'undefined' && user.role === '1') { %>
+    <div class="alert alert-danger" role="alert">
+      You are not allowed to see this page. As a patient you can enjoy some nice videos
+      on <a class="alert-link" href="/video-list">the other page</a>.
+    </div>
+<% } else { %>
+  <div class="row">
+    <section class="col-md-8">
+      <h2>Welcome <span class="fa fa-user-md"></h2>
+        <h3>Experiment Data</h3>
+
+          <div id="chart_div"></div>
+
+        <table class="table table-striped table-hover">
+          <% for(var i = 0; i < csvData.length; i++) { %>
+            <% if(i === 0) { %>
+            <thead>
+              <tr>
+                <th><%= csvData[i][0] %></th>
+                <th><%= csvData[i][1] %></th>
+                <th><%= csvData[i][2] %></th>
+              </tr>
+            </thead>
+            <tbody>
+            <% } %>
+            <tr>
+              <td><%= csvData[i][0] %></td>
+              <td><%= csvData[i][1] %></td>
+              <td><%= csvData[i][2] %></td>
+            </tr>
+          <% }; %>
+          </tbody>
+        </table>
+    </section>
+
+  </div>
+
+<% } %>
+  </main>
+
+  <% include ../partials/footer %>
+
+
+  <script>
+    var csvData = <%- JSON.stringify(csvData)  %>;
+    console.log(csvData);
+
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ['ID', 'X', 'Y', 'Time'],
+        ['',   80,  167,      120],
+        ['',   79,  136,      130],
+        ['',   78,  184,      50],
+        ['',   72,  278,      230],
+        ['',   81,  200,      210],
+        ['',   72,  170,      100],
+        ['',   68,  477,      80]
+      ]);
+
+      var options = {
+        colorAxis: {colors: ['yellow', 'red']}
+      };
+
+      var chart = new google.visualization.BubbleChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+  </script>
+
+</body>
+</html>

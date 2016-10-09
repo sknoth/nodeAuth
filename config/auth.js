@@ -3,8 +3,8 @@ module.exports = {
     'facebookAuth' : {
         'clientID'      : '1585381351768665', // your App ID
         'clientSecret'  : '01825b87881c156f574bde370f4ed0f5', // your App Secret
-        // 'callbackURL'   : 'http://localhost:8080/auth/facebook/callback'
-        'callbackURL'   : 'https://sk-nodeauth.herokuapp.com/auth/facebook/callback'
+        'callbackURL'   : 'http://localhost:9000/auth/facebook/callback'
+        // 'callbackURL'   : 'https://sk-nodeauth.herokuapp.com/auth/facebook/callback'
     },
     'twitterAuth' : {
         'consumerKey'       : 'ElH1u1V6wvejpcA03ip6nGbjG',

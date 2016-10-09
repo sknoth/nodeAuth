@@ -16,12 +16,13 @@
             <div class="well">
                 <h3><span class="fa fa-user"></span> Local</h3>
 
-                  <% if (user.local.email) { %>
+                  <% if (user.email) { %>
                     <p>
-                        <strong>id</strong>: <%= user._id %><br>
-                        <strong>email</strong>: <%= user.local.email %><br>
-                        <strong>password</strong>: <%= user.local.password %>
-                        <strong>role</strong>: <%= user.role %>
+                      <strong>id</strong>: <%= user._id %><br>
+                        <strong>userID</strong>: <%= user.userID %><br>
+                        <strong>email</strong>: <%= user.email %><br>
+                        <strong>password</strong>: <%= user.password %>
+                        <strong>role</strong>: <%= user.Role_RoleID %>
                     </p>
 
                     <a href="/unlink/local" class="btn btn-default">Unlink</a>
@@ -37,12 +38,12 @@
                 <h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
 
                   <!-- check if the user has this token (is the user authenticated with this social account) -->
-                  <% if (user.facebook.token) { %>
+                  <% if (user.facebook_id) { %>
                     <p>
-                        <strong>id</strong>: <%= user.facebook.id %><br>
-                        <strong>token</strong>: <%= user.facebook.token %><br>
-                        <strong>email</strong>: <%= user.facebook.email %><br>
-                        <strong>name</strong>: <%= user.facebook.name %>
+                        <strong>id</strong>: <%= user.facebook_id %><br>
+                        <strong>token</strong>: <%= user.facebook_token %><br>
+                        <strong>email</strong>: <%= user.facebook_email %><br>
+                        <strong>name</strong>: <%= user.facebook_name %>
                     </p>
 
                     <a href="/unlink/facebook" class="btn btn-primary">Unlink</a>
@@ -58,9 +59,9 @@
                 <h3 class="text-info"><span class="fa fa-twitter"></span> Twitter</h3>
 
                   <!-- check if the user has this token (is the user authenticated with this social account) -->
-                  <% if (user.twitter.token) { %>
+                  <% if (1==0|user.twitter_id) { %>
                     <p>
-                        <strong>id</strong>: <%= user.twitter.id %><br>
+                        <strong>id</strong>: <%= user.twitter_id %><br>
                         <strong>token</strong>: <%= user.twitter.token %><br>
                         <strong>username</strong>: <%= user.twitter.username %><br>
                         <strong>displayName</strong>: <%= user.twitter.displayName %>
@@ -79,7 +80,7 @@
                 <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google</h3>
 
                 <!-- check if the user has this token (is the user authenticated with this social account) -->
-                <% if (user.google.token) { %>
+                <% if (1==0|user.google_id) { %>
                     <p>
                         <strong>id</strong>: <%= user.google.id %><br>
                         <strong>token</strong>: <%= user.google.token %><br>

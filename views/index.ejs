@@ -9,12 +9,19 @@
 <div class="container">
 
     <div class="jumbotron text-center">
-        <p>Login or Register with:</p>
-        <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
-        <a href="/auth/twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</a>
-        <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google</a>
-        <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Local Login</a>
-        <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Local Signup</a>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-2">
+          <p>Login or Signup</p>
+          <a href="/signup" class="btn btn-success btn-lg btn-block"><span class="fa fa-user"></span> Local Signup</a>
+          <a href="/login" class="btn btn-default btn-lg btn-block"><span class="fa fa-user"></span> Local Login</a>
+        </div>
+      <div class="col-md-4">
+        <p>Or connect with:</p>
+        <a href="/auth/facebook" class="btn btn-primary btn-lg btn-block"><span class="fa fa-facebook"></span> Facebook</a>
+        <a href="/auth/twitter" class="btn btn-info btn-lg btn-block"><span class="fa fa-twitter"></span> Twitter</a>
+        <a href="/auth/google" class="btn btn-danger btn-lg btn-block"><span class="fa fa-google-plus"></span> Google</a>
+</div>
+</div>
     </div>
 
 </div>

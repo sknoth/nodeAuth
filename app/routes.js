@@ -22,36 +22,74 @@ module.exports = function(app, passport) {
     });
 
     var parseString = require('xml2js').parseString;
-    app.get('/patient-overview', isLoggedIn, function(req, res) {
+    var async = require("async");
+
+    var fs = require('fs');
+    var parse = require('csv-parse');
+
+    var lookupList = [
+      'http://4me302-16.site88.net/index.php?table=User',
+      'http://4me302-16.site88.net/index.php?table=Therapy',
+      'http://4me302-16.site88.net/index.php?table=Therapy_List',
+      'http://4me302-16.site88.net/index.php?table=Test',
+      'http://4me302-16.site88.net/index.php?table=Test_Session',
+      'http://4me302-16.site88.net/index.php?table=Note'
+    ];
+
+    var patientDataArr = [];
+
+    // solution from: http://stackoverflow.com/questions/32442426/solution-found-node-js-async-parallel-requests-are-running-sequentially
+    async.map(lookupList, function(url, callback) {
+
+        // iterator function
+        request(url, function (error, response, body) {
+
+            if (!error && response.statusCode == 200) {
+
+                //var body = JSON.parse(body);
+                // do any further processing of the data here
+                callback(null, body);
+            } else {
+                callback(error || response.statusCode);
+            }
+        });
+    }, function(err, results) {
+
+        // completion function
+        if (!err) {
+
+            // process all results in the array here
+
+            for (var i = 0; i < results.length; i++) {
+
+              parseString(results[i], function (err, result) {
+                patientDataArr.push(result);
+              });
+            }
+
+            console.log(patientDataArr);
+        } else {
+            // handle error here
+        }
+    });
+
+    app.get('/manage-patients', isLoggedIn, function(req, res) {
 
       var user = req.user;
-// http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx
-// http://www.techmeme.com/feed.xml
 
+      var parser = parse({delimiter: ','}, function(err, data) {
 
+        var csvData = data;
 
-request("http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx",
-  function(error, response, data) {
-
-  parseString(data, function (err, result) {
-      console.dir(result.rss.channel);
-
-        res.render('pages/patient-overview.ejs', {
-          message: req.flash('patient overview'),
-          user : req.user, // get the user out of session and pass to template
-          articles: result.rss.channel
+        res.render('pages/manage-patients.ejs', {
+          message: req.flash('manage-patients'),
+          user : req.user,
+          csvData: csvData
         });
-  });
-  });
-      // feed("http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx", function(err, articles) {
-      //
-      //   res.render('pages/patient-overview.ejs', {
-      //     message: req.flash('patient overview'),
-      //     user : req.user, // get the user out of session and pass to template
-      //     articles: articles
-      //   });
-      //
-      // });
+
+      });
+
+      fs.createReadStream('data/data1.csv').pipe(parser);
 
     });
 
@@ -78,6 +116,22 @@ request("http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx",
           });
         });
 
+    });
+
+    app.get('/rss-feed', isLoggedIn, function(req, res) {
+
+      request("http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx",
+        function(error, response, data) {
+
+          parseString(data, function (err, result) {
+
+              res.render('pages/rss-feed.ejs', {
+                message: req.flash('patient overview'),
+                user : req.user,
+                articles: result.rss.channel
+              });
+          });
+        });
     });
 
     // we will want this protected so you have to be logged in to visit
@@ -109,19 +163,16 @@ request("http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx",
     // =====================================
     // show the signup form
     app.get('/signup', function(req, res) {
-
         // render the page and pass in any flash data if it exists
         res.render('signup.ejs', { message: req.flash('signupMessage') });
     });
 
-    // process the signup form
+      // process the signup form
     app.post('/signup', passport.authenticate('local-signup', {
         successRedirect : '/profile', // redirect to the secure profile section
         failureRedirect : '/signup', // redirect back to the signup page if there is an error
         failureFlash : true // allow flash messages
     }));
-
-
 
 
     // =====================================

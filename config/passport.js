@@ -209,7 +209,7 @@ module.exports = function(passport) {
         twitter_displayname: profile.displayName
       };
 
-      connection.query("SELECT * FROM user WHERE facebook_id = ?",[profile.id],
+      connection.query("SELECT * FROM user WHERE twitter_id = ?",[profile.id],
         function(err, rows) {
 
           if (err)
@@ -311,57 +311,106 @@ module.exports = function(passport) {
     },
     function(req, token, refreshToken, profile, done) {
 
-        // make the code asynchronous
-        // User.findOne won't fire until we have all our data back from Google
-        process.nextTick(function() {
+      newUser.google.id    = profile.id;
+      newUser.google.token = token;
+      newUser.google.name  = profile.displayName;
+      newUser.google.email = profile.emails[0].value; // pull the first email
 
-          if(!req.user) {
+      var newUserMysql = {
+        username: profile.displayName,
+        Role_RoleID: 3,
+        organization_organizationID: 1,
+        google_id: profile.id,
+        google_token: token,
+        google_name: profile.displayName,
+        google_email: profile.emails[0].value
+      };
 
-            // try to find the user based on their google id
-            User.findOne({ 'google.id' : profile.id }, function(err, user) {
+      connection.query("SELECT * FROM user WHERE google_id = ?",[profile.id],
+        function(err, rows) {
+
+          if (err)
+              return done(err);
+
+          if (!rows.length) {
+            // adding the user to the DB if none is found:
+
+            var insertQuery = "INSERT INTO user ( username, Role_RoleID, organization_organizationID ,google_id, google_token, google_name, google_email) values (?,?,?,?,?,?,?)";
+
+            connection.query(insertQuery,[
+              newUserMysql.username,
+              newUserMysql.Role_RoleID,
+              newUserMysql.organization_organizationID,
+              newUserMysql.google_id,
+              newUserMysql.google_token,
+              newUserMysql.google_name,
+              newUserMysql.google_email
+            ], function(err, rows) {
+
                 if (err)
                     return done(err);
 
-                if (user) {
+                newUserMysql.userID = rows.insertId;
 
-                    // if a user is found, log them in
-                    return done(null, user);
-                } else {
-                    // if the user isnt in our database, create a new user
-                    var newUser          = new User();
-
-                    // set all of the relevant information
-                    newUser.google.id    = profile.id;
-                    newUser.google.token = token;
-                    newUser.google.name  = profile.displayName;
-                    newUser.google.email = profile.emails[0].value; // pull the first email
-
-                    // save the user
-                    newUser.save(function(err) {
-                        if (err)
-                            throw err;
-                        return done(null, newUser);
-                    });
-                }
+                return done(null, newUserMysql);
             });
+          }
 
-          } else {
-                 // user already exists and is logged in, we have to link accounts
-                 var user            = req.user; // pull the user out of the session
+          // all is well, return successful user
+          return done(null, rows[0]);
+      });
 
-                 user.google.id    = profile.id;
-                 user.google.token = token;
-                 user.google.name  = profile.displayName;
-                 user.google.email = profile.emails[0].value; // pull the first email
-
-                 // save the user
-                 user.save(function(err) {
-                     if (err)
-                         throw err;
-                     return done(null, user);
-                 });
-             }
-        });
+        // // make the code asynchronous
+        // // User.findOne won't fire until we have all our data back from Google
+        // process.nextTick(function() {
+        //
+        //   if(!req.user) {
+        //
+        //     // try to find the user based on their google id
+        //     User.findOne({ 'google.id' : profile.id }, function(err, user) {
+        //         if (err)
+        //             return done(err);
+        //
+        //         if (user) {
+        //
+        //             // if a user is found, log them in
+        //             return done(null, user);
+        //         } else {
+        //             // if the user isnt in our database, create a new user
+        //             var newUser          = new User();
+        //
+        //             // set all of the relevant information
+        //             newUser.google.id    = profile.id;
+        //             newUser.google.token = token;
+        //             newUser.google.name  = profile.displayName;
+        //             newUser.google.email = profile.emails[0].value; // pull the first email
+        //
+        //             // save the user
+        //             newUser.save(function(err) {
+        //                 if (err)
+        //                     throw err;
+        //                 return done(null, newUser);
+        //             });
+        //         }
+        //     });
+        //
+        //   } else {
+        //          // user already exists and is logged in, we have to link accounts
+        //          var user            = req.user; // pull the user out of the session
+        //
+        //          user.google.id    = profile.id;
+        //          user.google.token = token;
+        //          user.google.name  = profile.displayName;
+        //          user.google.email = profile.emails[0].value; // pull the first email
+        //
+        //          // save the user
+        //          user.save(function(err) {
+        //              if (err)
+        //                  throw err;
+        //              return done(null, user);
+        //          });
+        //      }
+        // });
 
     }));
 

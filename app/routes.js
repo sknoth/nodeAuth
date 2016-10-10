@@ -28,8 +28,7 @@ module.exports = function(app, passport) {
     var parse = require('csv-parse');
 
 
-//isLoggedIn,
-    app.get('/manage-patients',  function(req, res) {
+    app.get('/manage-patients', isLoggedIn, function(req, res) {
 
       var user = req.user;
 
@@ -95,6 +94,8 @@ module.exports = function(app, passport) {
 
     app.get('/video-list', isLoggedIn, function(req, res) {
 
+      var user = req.user;
+
       request("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PLwKZdOHmwfHGBPT0t5j3NWjrSGil2UNGD&maxResults=50&key=AIzaSyCHO1c4kXxpJx34Pf0ETlXkA-MeDFVznTU",
         function(error, response, data) {
 
@@ -108,6 +109,7 @@ module.exports = function(app, passport) {
 
           res.render('pages/video-list.ejs', {
             message: req.flash('video list'),
+            user : user,
             videoIds: videoIds
           });
         });

@@ -11,7 +11,7 @@
     "cors": "^2.8.1",
     "csv-parse": "^1.1.7",
     "csv-parser": "^1.11.0",
-    "ejs": "~2.5.0",
+    "ejs": "^2.5.2",
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "feed-read": "0.0.1",

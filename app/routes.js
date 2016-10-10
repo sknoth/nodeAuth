@@ -27,39 +27,48 @@ module.exports = function(app, passport) {
     var fs = require('fs');
     var parse = require('csv-parse');
 
-    var lookupList = [
-      'http://4me302-16.site88.net/index.php?table=User',
-      'http://4me302-16.site88.net/index.php?table=Therapy',
-      'http://4me302-16.site88.net/index.php?table=Therapy_List',
-      'http://4me302-16.site88.net/index.php?table=Test',
-      'http://4me302-16.site88.net/index.php?table=Test_Session',
-      'http://4me302-16.site88.net/index.php?table=Note'
-    ];
 
-    var patientDataArr = [];
+//isLoggedIn,
+    app.get('/manage-patients',  function(req, res) {
 
-    // solution from: http://stackoverflow.com/questions/32442426/solution-found-node-js-async-parallel-requests-are-running-sequentially
-    async.map(lookupList, function(url, callback) {
+      var user = req.user;
 
-        // iterator function
-        request(url, function (error, response, body) {
+      var parser = parse({delimiter: ','}, function(err, data) {
 
-            if (!error && response.statusCode == 200) {
+        var csvData = data;
 
-                //var body = JSON.parse(body);
-                // do any further processing of the data here
-                callback(null, body);
-            } else {
-                callback(error || response.statusCode);
-            }
-        });
-    }, function(err, results) {
+        var lookupList = [
+          'http://4me302-16.site88.net/index.php?table=User',
+          'http://4me302-16.site88.net/index.php?table=Therapy',
+          'http://4me302-16.site88.net/index.php?table=Therapy_List',
+          'http://4me302-16.site88.net/index.php?table=Test',
+          'http://4me302-16.site88.net/index.php?table=Test_Session',
+          'http://4me302-16.site88.net/index.php?table=Note',
+          'http://4me302-16.site88.net/index.php?table=Medicine'
+        ];
 
-        // completion function
-        if (!err) {
+        var patientDataArr = [];
+
+        // solution from: http://stackoverflow.com/questions/32442426/solution-found-node-js-async-parallel-requests-are-running-sequentially
+        async.map(lookupList, function(url, callback) {
+
+            // iterator function
+            request(url, function (error, response, body) {
+
+                if (!error && response.statusCode == 200) {
+
+                    // do any further processing of the data here
+                    callback(null, body);
+                } else {
+                    callback(error || response.statusCode);
+                }
+            });
+        }, function(err, results) {
+
+            if (err)
+              return false;
 
             // process all results in the array here
-
             for (var i = 0; i < results.length; i++) {
 
               parseString(results[i], function (err, result) {
@@ -68,23 +77,13 @@ module.exports = function(app, passport) {
             }
 
             console.log(patientDataArr);
-        } else {
-            // handle error here
-        }
-    });
 
-    app.get('/manage-patients', isLoggedIn, function(req, res) {
-
-      var user = req.user;
-
-      var parser = parse({delimiter: ','}, function(err, data) {
-
-        var csvData = data;
-
-        res.render('pages/manage-patients.ejs', {
-          message: req.flash('manage-patients'),
-          user : req.user,
-          csvData: csvData
+            res.render('pages/manage-patients.ejs', {
+              message: req.flash('manage-patients'),
+              user : req.user,
+              csvData: csvData,
+              patientDataArr: patientDataArr
+            });
         });
 
       });
@@ -94,11 +93,9 @@ module.exports = function(app, passport) {
     });
 
 
-    app.get('/video-list',  function(req, res) {
+    app.get('/video-list', isLoggedIn, function(req, res) {
 
-      var user = req.user;
-
-      request("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=UUrNRiQqbEGUtV17i4aiwGmg&key=AIzaSyCHO1c4kXxpJx34Pf0ETlXkA-MeDFVznTU",
+      request("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PLwKZdOHmwfHGBPT0t5j3NWjrSGil2UNGD&maxResults=50&key=AIzaSyCHO1c4kXxpJx34Pf0ETlXkA-MeDFVznTU",
         function(error, response, data) {
 
           var data = JSON.parse(data);
@@ -111,7 +108,6 @@ module.exports = function(app, passport) {
 
           res.render('pages/video-list.ejs', {
             message: req.flash('video list'),
-            user : user, // get the user out of session and pass to template
             videoIds: videoIds
           });
         });

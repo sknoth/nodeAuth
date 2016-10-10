@@ -10,15 +10,19 @@
   <main>
     <% if (typeof user != 'undefined' && user.Role_RoleID != 3) { %>
         <div class="alert alert-danger" role="alert">
-          You are not allowed to see this page. <br>
-          But you can take a look at some awesome videos at the
-          <a class="alert-link" href="/video-list">video list</a> page.
-          <% if (user.Role_RoleID === 2) { %>
-          <br>Or you might be more intersted in your patients data, which you
-          will find over at the
-          <a class="alert-link" href="/manage-patients">manage patients</a> page.
-          <% } %>
+          You are not allowed to see this page.
         </div>
+        <div class="alert alert-info" role="alert">
+           Take a look at some awesome videos at the
+          <a class="alert-link" href="/video-list">video list</a> page.
+        </div>
+        <% if (user.Role_RoleID === 2) { %>
+          <div class="alert alert-info" role="alert">
+            Or you might be more intersted in your patients data, which you
+            will find over at the
+            <a class="alert-link" href="/manage-patients">manage patients</a> page.
+          </div>
+        <% } %>
     <% } else { %>
     <section>
       <h2>

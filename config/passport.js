@@ -321,15 +321,16 @@ module.exports = function(passport) {
         google_email: profile.emails[0].value
       };
 
+      console.log('TOKEN---------- ', token);
       connection.query("SELECT * FROM user WHERE google_id = ?",[profile.id],
         function(err, rows) {
 
           if (err)
               return done(err);
 
+console.log('SELECTQUERAOKEN---------- ');
           if (!rows.length) {
             // adding the user to the DB if none is found:
-
             var insertQuery = "INSERT INTO user ( username, Role_RoleID, organization_organizationID ,google_id, google_token, google_name, google_email) values (?,?,?,?,?,?,?)";
 
             connection.query(insertQuery,[

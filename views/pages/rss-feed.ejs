@@ -12,13 +12,13 @@
         <div class="alert alert-danger" role="alert">
           You are not allowed to see this page.
         </div>
-      <% if (user.role) { %>
+      <% if (user.Role_RoleID) { %>
         <div class="alert alert-info" role="alert">
            Take a look at some awesome videos at the
           <a class="alert-link" href="/video-list">video list</a> page.
         </div>
       <% } %>
-      <% if (user.role && user.Role_RoleID === 2) { %>
+      <% if (user.Role_RoleID && user.Role_RoleID === 2) { %>
         <div class="alert alert-info" role="alert">
           Or you might be more intersted in your patients data, which you
           will find over at the

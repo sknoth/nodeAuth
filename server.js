@@ -8,34 +8,16 @@ var port     = process.env.PORT || 9000;
 // var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
-var ConnectRoles = require('connect-roles');
 
 var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
-var cors         = require('cors');
-
 var configDB = require('./config/database.js');
 
 // configuration ===============================================================
-// mongoose.connect(configDB.url); // connect to our database
-
 require('./config/passport')(passport); // pass passport for configuration
-
-app.use(cors());
-
-app.all('/*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
-});
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
 
 // set up our express application
 app.use(morgan('dev')); // log every request to the console
@@ -52,13 +34,11 @@ app.set('view engine', 'ejs'); // set up ejs for templating
 require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 
-var request = require('request');
-
-
 // launch ======================================================================
 app.listen(port);
-console.log('1The magic happens on port ' + port);
+console.log('The magic happens on port ' + port);
 
+// Keep the app running even if there is a fatal exeption ;)
 process.on('uncaughtException', function (err) {
     console.log(err);
 });

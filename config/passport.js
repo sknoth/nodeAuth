@@ -5,17 +5,13 @@ var TwitterStrategy  = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var configAuth = require('./auth');
-
-var User     = require('../app/models/user');
-
 var bcrypt   = require('bcrypt-nodejs');
 var mysql = require("mysql");
 
 var configDB = require('./database');
 var connection = mysql.createConnection(configDB.connection);
-console.log(11111);
 connection.query('USE ' + configDB.database);
-console.log(222);
+
 // expose this function to our app using module.exports
 module.exports = function(passport) {
 
@@ -243,61 +239,6 @@ module.exports = function(passport) {
           return done(null, rows[0]);
       });
 
-    //
-    //     // make the code asynchronous
-    //     // User.findOne won't fire until we have all our data back from Twitter
-    //     process.nextTick(function() {
-    //
-    //       if(!req.user) {
-    //
-    //         User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
-    //
-    //             // if there is an error, stop everything and return that
-    //             // ie an error connecting to the database
-    //             if (err)
-    //                 return done(err);
-    //
-    //             // if the user is found then log them in
-    //             if (user) {
-    //                 return done(null, user); // user found, return that user
-    //             } else {
-    //                 // if there is no user, create them
-    //                 var newUser                 = new User();
-    //
-    //                 // set all of the user data that we need
-    //                 newUser.twitter.id          = profile.id;
-    //                 newUser.twitter.token       = token;
-    //                 newUser.twitter.username    = profile.username;
-    //                 newUser.twitter.displayName = profile.displayName;
-    //
-    //                 // save our user into the database
-    //                 newUser.save(function(err) {
-    //                     if (err)
-    //                         throw err;
-    //                     return done(null, newUser);
-    //                 });
-    //             }
-    //         });
-    //
-    //       } else {
-    //             // user already exists and is logged in, we have to link accounts
-    //             var user            = req.user; // pull the user out of the session
-    //
-    //             user.twitter.id          = profile.id;
-    //             user.twitter.token       = token;
-    //             user.twitter.username    = profile.username;
-    //             user.twitter.displayName = profile.displayName;
-    //
-    //             // save the user
-    //             user.save(function(err) {
-    //                 if (err)
-    //                     throw err;
-    //                 return done(null, user);
-    //             });
-    //         }
-    //
-    // });
-
     }));
 
 
@@ -322,7 +263,6 @@ module.exports = function(passport) {
         google_email: profile.emails[0].value
       };
 
-      console.log('TOKEN---------- ', token, profile.id, profile.displayName, profile.emails[0].value);
       connection.query("SELECT * FROM user WHERE google_id = ?",[profile.id],
         function(err, rows) {
 
@@ -356,60 +296,6 @@ module.exports = function(passport) {
           return done(null, rows[0]);
       });
 
-        // // make the code asynchronous
-        // // User.findOne won't fire until we have all our data back from Google
-        // process.nextTick(function() {
-        //
-        //   if(!req.user) {
-        //
-        //     // try to find the user based on their google id
-        //     User.findOne({ 'google.id' : profile.id }, function(err, user) {
-        //         if (err)
-        //             return done(err);
-        //
-        //         if (user) {
-        //
-        //             // if a user is found, log them in
-        //             return done(null, user);
-        //         } else {
-        //             // if the user isnt in our database, create a new user
-        //             var newUser          = new User();
-        //
-        //             // set all of the relevant information
-        //             newUser.google.id    = profile.id;
-        //             newUser.google.token = token;
-        //             newUser.google.name  = profile.displayName;
-        //             newUser.google.email = profile.emails[0].value; // pull the first email
-        //
-        //             // save the user
-        //             newUser.save(function(err) {
-        //                 if (err)
-        //                     throw err;
-        //                 return done(null, newUser);
-        //             });
-        //         }
-        //     });
-        //
-        //   } else {
-        //          // user already exists and is logged in, we have to link accounts
-        //          var user            = req.user; // pull the user out of the session
-        //
-        //          user.google.id    = profile.id;
-        //          user.google.token = token;
-        //          user.google.name  = profile.displayName;
-        //          user.google.email = profile.emails[0].value; // pull the first email
-        //
-        //          // save the user
-        //          user.save(function(err) {
-        //              if (err)
-        //                  throw err;
-        //              return done(null, user);
-        //          });
-        //      }
-        // });
-
     }));
-
-
 
 };

@@ -8,14 +8,17 @@
   <% include ../partials/header %>
 
   <main>
-<% if (typeof user != 'undefined' && user.role === '1') { %>
+
+<% if (typeof user != 'undefined' && user.role && user.role === '1') { %>
     <div class="alert alert-danger" role="alert">
       You are not allowed to see this page.
     </div>
+    <% if (user.role) { %>
     <div class="alert alert-info" role="alert">
        Take a look at some awesome videos at the
       <a class="alert-link" href="/video-list">video list</a> page.
     </div>
+    <% } %>
 <% } else { %>
 
   <div class="row">

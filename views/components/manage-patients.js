@@ -2,7 +2,6 @@ google.charts.load("current", {packages:["corechart"]});
 
 google.charts.setOnLoadCallback(drawChart);
 
-
 function decorateCsvData(data) {
 
   for(var i = 0; i < data.length; i++) {

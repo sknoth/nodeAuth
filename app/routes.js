@@ -1,18 +1,11 @@
+var request = require("request");
+
+// Pages
+var managePatients = require('./components/manage-patients.js');
+var videoList = require('./components/video-list.js');
+var rssFeed = require('./components/rss-feed.js');
+
 module.exports = function(app, passport) {
-
-  var feed = require('feed-read');
-  var request = require("request");
-
-  app.all('/*', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
-  });
-  app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -21,115 +14,17 @@ module.exports = function(app, passport) {
         res.render('index.ejs'); // load the index.ejs file
     });
 
-    var parseString = require('xml2js').parseString;
-    var async = require("async");
-
-    var fs = require('fs');
-    var parse = require('csv-parse');
-
-
     app.get('/manage-patients', isLoggedIn, function(req, res) {
-
-      var user = req.user;
-
-      var parser = parse({delimiter: ','}, function(err, data) {
-
-        var csvData = data;
-
-        var lookupList = [
-          'http://4me302-16.site88.net/index.php?table=User',
-          'http://4me302-16.site88.net/index.php?table=Therapy',
-          'http://4me302-16.site88.net/index.php?table=Therapy_List',
-          'http://4me302-16.site88.net/index.php?table=Test',
-          'http://4me302-16.site88.net/index.php?table=Test_Session',
-          'http://4me302-16.site88.net/index.php?table=Note',
-          'http://4me302-16.site88.net/index.php?table=Medicine'
-        ];
-
-        var patientDataArr = [];
-
-        // solution from: http://stackoverflow.com/questions/32442426/solution-found-node-js-async-parallel-requests-are-running-sequentially
-        async.map(lookupList, function(url, callback) {
-
-            // iterator function
-            request(url, function (error, response, body) {
-
-                if (!error && response.statusCode == 200) {
-
-                    // do any further processing of the data here
-                    callback(null, body);
-                } else {
-                    callback(error || response.statusCode);
-                }
-            });
-        }, function(err, results) {
-
-            if (err)
-              return false;
-
-            // process all results in the array here
-            for (var i = 0; i < results.length; i++) {
-
-              parseString(results[i], function (err, result) {
-                patientDataArr.push(result);
-              });
-            }
-
-            console.log(patientDataArr);
-
-            res.render('pages/manage-patients.ejs', {
-              message: req.flash('manage-patients'),
-              user : req.user,
-              csvData: csvData,
-              patientDataArr: patientDataArr
-            });
-        });
-
-      });
-
-      fs.createReadStream('data/data1.csv').pipe(parser);
-
+      managePatients.renderPage('pages/manage-patients.ejs', req, res);
     });
 
-
     app.get('/video-list', isLoggedIn, function(req, res) {
-
-      var user = req.user;
-
-      request("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=PLwKZdOHmwfHGBPT0t5j3NWjrSGil2UNGD&maxResults=50&key=AIzaSyCHO1c4kXxpJx34Pf0ETlXkA-MeDFVznTU",
-        function(error, response, data) {
-
-          var data = JSON.parse(data);
-          var videos = data.items;
-          var videoIds = [];
-
-          for (var key in videos) {
-            videoIds.push(videos[key].snippet.resourceId.videoId);
-          }
-
-          res.render('pages/video-list.ejs', {
-            message: req.flash('video list'),
-            user : user,
-            videoIds: videoIds
-          });
-        });
-
+      videoList.renderPage('pages/video-list.ejs', req, res);
     });
 
     app.get('/rss-feed', isLoggedIn, function(req, res) {
+      rssFeed.renderPage('pages/rss-feed.ejs', req, res);
 
-      request("http://www.news-medical.net/tag/feed/Parkinsons-Disease.aspx",
-        function(error, response, data) {
-
-          parseString(data, function (err, result) {
-
-              res.render('pages/rss-feed.ejs', {
-                message: req.flash('patient overview'),
-                user : req.user,
-                articles: result.rss.channel
-              });
-          });
-        });
     });
 
     // we will want this protected so you have to be logged in to visit
@@ -266,8 +161,6 @@ module.exports = function(app, passport) {
               failureRedirect : '/'
           }));
 
-
-
     // =====================================
     // LOGOUT ==============================
     // =====================================
@@ -285,6 +178,5 @@ function isLoggedIn(req, res, next) {
         return next();
 
     // if they aren't redirect them to the home page
-
     res.redirect('/');
 }

@@ -21,13 +21,9 @@
                       <strong>id</strong>: <%= user._id %><br>
                         <strong>userID</strong>: <%= user.userID %><br>
                         <strong>email</strong>: <%= user.email %><br>
-                        <strong>password</strong>: <%= user.password %>
+                        <strong>password</strong>: <%= user.password %><br>
                         <strong>role</strong>: <%= user.Role_RoleID %>
                     </p>
-
-                    <a href="/unlink/local" class="btn btn-default">Unlink</a>
-                  <% } else { %>
-                       <a href="/connect/local" class="btn btn-default">Connect Local</a>
                   <% } %>
             </div>
         </div>
@@ -43,12 +39,9 @@
                         <strong>id</strong>: <%= user.facebook_id %><br>
                         <strong>token</strong>: <%= user.facebook_token %><br>
                         <strong>email</strong>: <%= user.facebook_email %><br>
-                        <strong>name</strong>: <%= user.facebook_name %>
+                        <strong>name</strong>: <%= user.facebook_name %><br>
+                        <strong>role</strong>: <%= user.Role_RoleID %>
                     </p>
-
-                    <a href="/unlink/facebook" class="btn btn-primary">Unlink</a>
-                  <% } else { %>
-                    <a href="/connect/facebook" class="btn btn-primary">Connect Facebook</a>
                   <% } %>
             </div>
         </div>
@@ -64,12 +57,9 @@
                         <strong>id</strong>: <%= user.twitter_id %><br>
                         <strong>token</strong>: <%= user.twitter_token %><br>
                         <strong>username</strong>: <%= user.twitter_username %><br>
-                        <strong>displayName</strong>: <%= user.twitter_displayName %>
+                        <strong>displayName</strong>: <%= user.twitter_displayName %><br>
+                        <strong>role</strong>: <%= user.Role_RoleID %>
                     </p>
-
-                    <a href="/unlink/twitter" class="btn btn-info">Unlink</a>
-                  <% } else { %>
-                    <a href="/connect/twitter" class="btn btn-info">Connect Twitter</a>
                   <% } %>
             </div>
         </div>
@@ -85,12 +75,9 @@
                         <strong>id</strong>: <%= user.google_id %><br>
                         <strong>token</strong>: <%= user.google_token %><br>
                         <strong>email</strong>: <%= user.google_email %><br>
-                        <strong>name</strong>: <%= user.google_name %>
+                        <strong>name</strong>: <%= user.google_name %><br>
+                        <strong>role</strong>: <%= user.Role_RoleID %>
                     </p>
-
-                    <a href="/unlink/google" class="btn btn-danger">Unlink</a>
-                  <% } else { %>
-                    <a href="/connect/google" class="btn btn-danger">Connect Google</a>
                   <% } %>
             </div>
         </div>
